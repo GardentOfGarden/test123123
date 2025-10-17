@@ -27,11 +27,10 @@ app.post('/api/chat', async (req, res) => {
                 max_tokens_to_sample: 200
             })
         });
-const data = await response.json();
 
-// Проверяем, где именно находится текст ответа
-const replyText = data.completion || data.completion?.[0]?.text || data?.completion?.text || "Нет ответа";
-res.json({ reply: replyText });
+        const data = await response.json();
+        const reply = data.completion || data.completion?.[0]?.text || "Нет ответа";
+        res.json({ reply });
     } catch (err) {
         console.error(err);
         res.status(500).json({ reply: "Ошибка сервера" });
