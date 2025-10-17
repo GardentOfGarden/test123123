@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Чат с Claude</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; background: #fff; }
+    .message { margin: 10px 0; }
+    .user { color: blue; }
+    .bot { color: green; }
+    #inputForm { margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<h2>Чат с Claude (Anthropic)</h2>
+<div id="chat"></div>
+
+<form id="inputForm">
+    <input type="text" id="userInput" placeholder="Напишите сообщение..." style="width:80%;">
+    <button type="submit">Отправить</button>
+</form>
+
+<script>
+const chat = document.getElementById('chat');
+const form = document.getElementById('inputForm');
+const input = document.getElementById('userInput');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage('user', message);
+    input.value = '';
+
+    const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+    appendMessage('bot', data.reply);
+});
+
+function appendMessage(sender, text) {
+    const div = document.createElement('div');
+    div.className = `message ${sender}`;
+    div.textContent = `${sender === 'user' ? 'Вы' : 'Claude'}: ${text}`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+</script>
+
+</body>
+</html>
